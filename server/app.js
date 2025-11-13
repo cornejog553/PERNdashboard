@@ -5,9 +5,13 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-app.use('/api/bookings', require('./routes/bookings'));
-app.use('/api/cleaners', require('./routes/cleaners'))
-app.use('/api/customers', require('./routes/customers'))
-app.use('/api/services', require('./routes/services'))
+const bookingsRouter = require('./routes/bookings')
+// const cleanersRouter = require('./routes/cleaners')
+// const customersRouter = require('./routes/customers')
+// const servicesRouter = require('./routes/services')
+app.use('/api/bookings', bookingsRouter);
+// app.use('/api/cleaners', cleanersRouter)
+// app.use('/api/customers', customersRouter)
+// app.use('/api/services', servicesRouter)
 
 module.exports = app;
