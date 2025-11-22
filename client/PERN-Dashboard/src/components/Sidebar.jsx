@@ -9,9 +9,9 @@ import { NavLink } from "react-router-dom";
 export default function Sidebar() {
   return (
     <>
-      <div className="flex flex-col bg-blue-950 text-gray-400 text-lg">
+      <div className="flex flex-col bg-white text-gray-600 text-lg font-semibold gap-5 border-r border-gray-200">
         {/* Logo */}
-        <div className="flex flex-row items-center border border-solid border-b-gray-200">
+        <div className="flex flex-row items-center justify-around">
           <div>
             <img
               src={logo}
@@ -21,19 +21,23 @@ export default function Sidebar() {
           </div>
           <div>Cleaning Crafters</div>
         </div>
-        <div className="flex flex-row items-center gap-2 border border-solid border-b-gray-200 p-2">
-          <img src={dashboardLogo} alt="Dashboard icon" />
+        <div className="flex flex-row justify-start ml-5 hover:bg-blue-600 hover:text-white">
+          <div className="flex flex-row gap-3 p-2">
+            <img src={dashboardLogo} alt="Dashboard icon" 
+            className="group-hover:brightness-0 group-hover:invert
+            "/>
           <NavLink
             to="/"
             end
             className={({ isActive }) =>
-              isActive ? "text-blue-600 font-bold" : "hover:text-blue-600"
+              isActive ? "text-blue-600 font-bold hover:text-white" : "hover:text-white"
             }
           >
             Dashboard
           </NavLink>
+          </div>
         </div>
-        <div className="flex flex-row items-center gap-2 border border-solid border-b-gray-200 p-2">
+        <div className="flex flex-row items-center gap-3 p-2 ml-5 hover:bg-blue-600 hover:text-white">
           <img src={bookingIcon} alt="Dashboard icon" />
           <NavLink
             to="/bookings"
@@ -44,7 +48,7 @@ export default function Sidebar() {
             Bookings
           </NavLink>
         </div>
-        <div className="flex flex-row items-center gap-2 border border-solid border-b-gray-200 p-2">
+        <div className="flex flex-row items-center gap-3 p-2 ml-5 hover:bg-blue-600 hover:text-white">
           <img src={customerIcon} alt="Dashboard icon" />
           <NavLink
             to="/customers"
@@ -55,7 +59,7 @@ export default function Sidebar() {
             Customers
           </NavLink>
         </div>
-        <div className="flex flex-row items-center gap-2 border border-solid border-b-gray-200 p-2">
+        <div className="flex flex-row items-center gap-3 p-2 ml-5 hover:bg-blue-600 hover:text-white">
           <img src={cleanerIcon} alt="Dashboard icon" />
           <NavLink
             to="/cleaners"
