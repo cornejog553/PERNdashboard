@@ -22,6 +22,7 @@ import "react-big-calendar/lib/css/react-big-calendar.css";
 export default function BookingCalendar() {
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [currentDate, setCurrentDate] = useState(new Date());
 
   useEffect(() => {
     async function fetchBookings() {
@@ -71,6 +72,8 @@ export default function BookingCalendar() {
       defaultView={Views.MONTH}
       view={currentView}
       onView={setCurrentView}
+      date={currentDate}
+      onNavigate={(newDate) => setCurrentDate(newDate)}
       onSelectEvent={handleSelectEvent}
     />
   );
