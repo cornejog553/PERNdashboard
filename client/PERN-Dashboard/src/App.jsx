@@ -3,7 +3,6 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import './App.css'
 import DashboardLayout from './components/DashboardLayout.jsx';
 import Dashboard from './pages/Dashboard'
-import Bookings from './pages/Bookings'
 import BookingCalendar from './components/BookingCalendar'
 import Customers from './pages/Customers'
 import Cleaners from './pages/Cleaners'

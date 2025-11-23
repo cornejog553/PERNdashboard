@@ -4,21 +4,6 @@ import { Calendar, Views } from "react-big-calendar";
 import { localizer } from "./calendarSetup";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 
-// const events = [
-//   {
-//     title: 'Water Heater Repair',
-//     start: new Date(2025, 10, 18, 10, 0),
-//     end: new Date(2025, 10, 18, 11, 30),
-//     id: 1,
-//   },
-//   {
-//     title: 'Drain Cleaning',
-//     start: new Date(2025, 10, 19, 14, 0),
-//     end: new Date(2025, 10, 19, 15, 0),
-//     id: 2,
-//   },
-// ];
-
 export default function BookingCalendar() {
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
