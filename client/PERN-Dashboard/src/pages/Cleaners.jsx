@@ -23,6 +23,7 @@ export default function Cleaners() {
   };
 
   useEffect(() => {
+    console.log('API URL:', import.meta.env.VITE_API_URL);
     async function fetchCleaners() {
       try {
         const res = await fetch(`${import.meta.env.VITE_API_URL}/api/cleaners`);
