@@ -1,5 +1,5 @@
 import logo from "../assets/CleaningLogo.png";
-import dashboardLogo from "../assets/Dashboardlogo.svg";
+import dashboardLogo from "../assets/DashboardLogo.svg";
 import bookingIcon from "../assets/BookingIcon.svg";
 import customerIcon from "../assets/CustomersIcon.svg";
 import cleanerIcon from "../assets/cleanerIcon.svg";
