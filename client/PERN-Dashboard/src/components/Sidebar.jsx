@@ -1,7 +1,7 @@
 import logo from "../assets/CleaningLogo.png";
-import dashboardLogo from "../assets/Dashboard logo.svg";
-import bookingIcon from "../assets/Booking Icon.svg";
-import customerIcon from "../assets/Customers Icon.svg";
+import dashboardLogo from "../assets/Dashboardlogo.svg";
+import bookingIcon from "../assets/BookingIcon.svg";
+import customerIcon from "../assets/CustomersIcon.svg";
 import cleanerIcon from "../assets/cleanerIcon.svg";
 
 import { NavLink } from "react-router-dom";
