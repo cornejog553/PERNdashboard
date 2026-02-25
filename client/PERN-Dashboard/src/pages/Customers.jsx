@@ -8,7 +8,7 @@ export default function Customers() {
   useEffect(() => {
     async function fetchBookings() {
       try {
-        const res = await fetch("http://localhost:5000/api/customers");
+        const res = await fetch(`${import.meta.env.VITE_API_URL}/api/customers`);
         const customerData = await res.json();
 
         setCustomers(customerData);

@@ -12,7 +12,7 @@ export default function BookingCalendar() {
   useEffect(() => {
     async function fetchBookings() {
       try {
-        const res = await fetch("http://localhost:5000/api/bookings");
+        const res = await fetch(`${import.meta.env.VITE_API_URL}/api/bookings`);
         const data = await res.json();
 
         //Convert start and end Date objects

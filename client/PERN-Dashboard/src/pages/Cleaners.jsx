@@ -25,7 +25,7 @@ export default function Cleaners() {
   useEffect(() => {
     async function fetchCleaners() {
       try {
-        const res = await fetch("http://localhost:5000/api/cleaners");
+        const res = await fetch(`${import.meta.env.VITE_API_URL}/api/cleaners`);
         const cleanersData = await res.json();
 
         setCleaners(cleanersData);
