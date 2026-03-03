@@ -83,7 +83,7 @@ export default function Cleaners() {
     );
 
   return (
-    <div className="flex gap-10 flex-wrap justify-between">
+    <div className="flex gap-10 flex-wrap justify-start">
       <div className="flex justify-end mb-4 w-full">
         <button
           onClick={() => setShowModal(true)}
