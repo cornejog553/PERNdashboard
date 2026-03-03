@@ -12,4 +12,23 @@ router.get("/", async (req, res) => {
   }
 });
 
+// Create new cleaner
+router.post("/", async (req, res) => {
+  try {
+    const { full_name, email, phone, is_active} = req.body;
+    
+    const result = await pool.query(
+      `INSERT INTO cleaners (full_name, email, phone, is_active) 
+       VALUES ($1, $2, $3, $4) 
+       RETURNING *`,
+      [full_name, email, phone, is_active]
+    );
+    
+    res.status(201).json(result.rows[0]);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Server error");
+  }
+});
+
 module.exports = router;
