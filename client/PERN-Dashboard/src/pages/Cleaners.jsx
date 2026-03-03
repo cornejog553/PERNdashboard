@@ -11,19 +11,42 @@ export default function Cleaners() {
     full_name: "",
     email: "",
     phone: "",
+    is_active: true,
   });
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    // Handle form submission (add to cleaners array, API call, etc.)
-    console.log(formData);
+  const handleNewCleanerSubmit = async (e) => {
+  e.preventDefault();
+  
+  try {
+    const response = await fetch(`${import.meta.env.VITE_API_URL}/api/cleaners`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(formData)
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to add cleaner');
+    }
+
+    const newCleaner = await response.json();
+    
+    // Add the new cleaner to your local state
+    setCleaners([...cleaners, newCleaner]);
+    
+    // Close modal and reset form
     setShowModal(false);
-    // Reset form
-    setFormData({ full_name: '', email: '', phone: '' });
-  };
+    setFormData({ full_name: '', email: '', phone: '', is_active: true });
+    
+  } catch (error) {
+    console.error('Error adding cleaner:', error);
+    alert('Failed to add cleaner. Please try again.');
+  }
+};
 
   useEffect(() => {
-    console.log('API URL:', import.meta.env.VITE_API_URL);
+    console.log("API URL:", import.meta.env.VITE_API_URL);
     async function fetchCleaners() {
       try {
         const res = await fetch(`${import.meta.env.VITE_API_URL}/api/cleaners`);
@@ -42,17 +65,17 @@ export default function Cleaners() {
 
   if (loading)
     return (
-      <div class="mx-auto w-full max-w-sm rounded-md border border-blue-300 p-4">
-        <div class="flex animate-pulse space-x-4">
-          <div class="size-10 rounded-full bg-gray-200"></div>
-          <div class="flex-1 space-y-6 py-1">
-            <div class="h-2 rounded bg-gray-200"></div>
-            <div class="space-y-3">
-              <div class="grid grid-cols-3 gap-4">
-                <div class="col-span-2 h-2 rounded bg-gray-200"></div>
-                <div class="col-span-1 h-2 rounded bg-gray-200"></div>
+      <div className="mx-auto w-full max-w-sm rounded-md border border-blue-300 p-4">
+        <div className="flex animate-pulse space-x-4">
+          <div className="size-10 rounded-full bg-gray-200"></div>
+          <div className="flex-1 space-y-6 py-1">
+            <div className="h-2 rounded bg-gray-200"></div>
+            <div className="space-y-3">
+              <div className="grid grid-cols-3 gap-4">
+                <div className="col-span-2 h-2 rounded bg-gray-200"></div>
+                <div className="col-span-1 h-2 rounded bg-gray-200"></div>
               </div>
-              <div class="h-2 rounded bg-gray-200"></div>
+              <div className="h-2 rounded bg-gray-200"></div>
             </div>
           </div>
         </div>
@@ -76,7 +99,7 @@ export default function Cleaners() {
           <div className="bg-white rounded-lg p-6 w-96 border border-gray-200 shadow-xl">
             <h2 className="text-xl font-bold mb-4">Add New Cleaner</h2>
 
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={handleNewCleanerSubmit}>
               <div className="mb-4">
                 <label className="block text-sm font-medium mb-2">Name</label>
                 <input
@@ -116,10 +139,30 @@ export default function Cleaners() {
                 />
               </div>
 
+              <div className="mb-4">
+                <label className="block text-sm font-medium mb-2">Active Cleaner?</label>
+                <select
+                  value={formData.is_active}
+                  onChange={(e) =>
+                    setFormData({ 
+                      ...formData,
+                      is_active: e.target.value === "true",
+                    })
+                  }
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  <option value="true">Active</option>
+                  <option value="false">Inactive</option>
+                </select>
+              </div>
+
               <div className="flex gap-2 justify-end">
                 <button
                   type="button"
-                  onClick={() => setShowModal(false)}
+                  onClick={() => {
+                    setShowModal(false);
+                    setFormData({ full_name: "", email: "", phone: "" });
+                  }}
                   className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer"
                 >
                   Cancel
@@ -148,7 +191,7 @@ export default function Cleaners() {
           <div className="flex gap-2 items-center">
             <img src={emailIcon} alt="" />
             <span
-              class="w-full sm:w-auto truncate block max-w-full overflow-hidden text-ellipsis whitespace-nowrap"
+              className="w-full sm:w-auto truncate block max-w-full overflow-hidden text-ellipsis whitespace-nowrap"
               title={cleaner.email}
             >
               {cleaner.email}
