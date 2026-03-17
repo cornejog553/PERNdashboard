@@ -21,68 +21,73 @@ export default function Cleaners() {
   });
 
   const handleNewCleanerSubmit = async (e) => {
-  e.preventDefault();
-  
-  try {
-    const response = await fetch(`${import.meta.env.VITE_API_URL}/api/cleaners`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`
-      },
-      body: JSON.stringify(formData)
-    });
+    e.preventDefault();
 
-    if (!response.ok) {
-      throw new Error('Failed to add cleaner');
-    }
-
-    const newCleaner = await response.json();
-    
-    // Add the new cleaner to your local state
-    setCleaners([...cleaners, newCleaner]);
-    
-    // Close modal and reset form
-    setShowModal(false);
-    setFormData({ full_name: '', email: '', phone: '', is_active: true });
-    
-  } catch (error) {
-    console.error('Error adding cleaner:', error);
-    alert('Failed to add cleaner. Please try again.');
-  }
-};
-
-useEffect(() => {
-  async function fetchCleaners() {
     try {
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/cleaners`, {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
-      
-      if (!res.ok) {
-        if (res.status === 401) {
-          // Token expired or invalid
-          localStorage.removeItem("token");
-          localStorage.removeItem("user");
-          navigate("/login");
-          return;
-        }
-        throw new Error('Failed to fetch cleaners');
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}/api/cleaners`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(formData),
+        },
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to add cleaner");
       }
 
-      const cleanersData = await res.json();
-      setCleaners(cleanersData);
-    } catch (err) {
-      console.error("Error fetching cleaners:", err);
-    } finally {
-      setLoading(false);
-    }
-  }
+      const newCleaner = await response.json();
 
-  fetchCleaners();
-}, [token]);
+      // Add the new cleaner to your local state
+      setCleaners([...cleaners, newCleaner]);
+
+      // Close modal and reset form
+      setShowModal(false);
+      setFormData({ full_name: "", email: "", phone: "", is_active: true });
+    } catch (error) {
+      console.error("Error adding cleaner:", error);
+      alert("Failed to add cleaner. Please try again.");
+    }
+  };
+
+  useEffect(() => {
+    async function fetchCleaners() {
+      try {
+        const res = await fetch(
+          `${import.meta.env.VITE_API_URL}/api/cleaners`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          },
+        );
+
+        if (!res.ok) {
+          if (res.status === 401) {
+            // Token expired or invalid
+            localStorage.removeItem("token");
+            localStorage.removeItem("user");
+            navigate("/login");
+            return;
+          }
+          throw new Error("Failed to fetch cleaners");
+        }
+
+        const cleanersData = await res.json();
+        setCleaners(cleanersData);
+      } catch (err) {
+        console.error("Error fetching cleaners:", err);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchCleaners();
+  }, [token]);
 
   if (loading)
     return (
@@ -105,17 +110,14 @@ useEffect(() => {
 
   return (
     <div className="flex gap-10 flex-wrap justify-start">
-      <div className="flex justify-end mb-4 w-full">
-        <button
-          onClick={() => setShowModal(true)}
-          className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors cursor-pointer"
-        >
-          Add Cleaner
-        </button>
-      </div>
+      {isAdmin && (
+        <div className="flex justify-end mb-4 w-full">
+          <button onClick={() => setShowModal(true)}>Add Cleaner</button>
+        </div>
+      )}
 
       {/* Modal */}
-      {showModal && (
+      {showModal && isAdmin && (
         <div className="fixed inset-0 backdrop-blur-sm bg-white/30 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-6 w-96 border border-gray-200 shadow-xl">
             <h2 className="text-xl font-bold mb-4">Add New Cleaner</h2>
@@ -161,11 +163,13 @@ useEffect(() => {
               </div>
 
               <div className="mb-4">
-                <label className="block text-sm font-medium mb-2">Active Cleaner?</label>
+                <label className="block text-sm font-medium mb-2">
+                  Active Cleaner?
+                </label>
                 <select
                   value={formData.is_active}
                   onChange={(e) =>
-                    setFormData({ 
+                    setFormData({
                       ...formData,
                       is_active: e.target.value === "true",
                     })

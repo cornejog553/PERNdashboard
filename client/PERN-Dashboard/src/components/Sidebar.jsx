@@ -27,7 +27,6 @@ export default function Sidebar() {
               className="h-30 w-auto"
             />
           </div>
-          <div>Cleaning Crafters</div>
         </div>
 
         <NavLink
