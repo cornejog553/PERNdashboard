@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const pool = require("../db");
+const { auth, adminOnly } = require("../middleware/auth");
 
 router.get("/", async (req, res) => {
   try {
@@ -12,10 +13,10 @@ router.get("/", async (req, res) => {
   }
 });
 
-// Create new cleaner
-router.post("/", async (req, res) => {
+// Create new cleaner - require admin role
+router.post("/", auth, adminOnly, async (req, res) => {
   try {
-    const { full_name, email, phone, is_active} = req.body;
+    const { full_name, email, phone, is_active } = req.body;
     
     const result = await pool.query(
       `INSERT INTO cleaners (full_name, email, phone, is_active) 

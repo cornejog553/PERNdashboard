@@ -5,10 +5,12 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+const authRouter = require('./routes/auth');
 const bookingsRouter = require('./routes/bookings')
 const cleanersRouter = require('./routes/cleaners')
 const customersRouter = require('./routes/customers')
 // const servicesRouter = require('./routes/services')
+app.use('/api/auth', authRouter);
 app.use('/api/bookings', bookingsRouter);
 app.use('/api/cleaners', cleanersRouter)
 app.use('/api/customers', customersRouter)
