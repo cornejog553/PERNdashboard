@@ -3,10 +3,18 @@ import dashboardLogo from "../assets/DashboardLogo.svg";
 import bookingIcon from "../assets/BookingIcon.svg";
 import customerIcon from "../assets/CustomersIcon.svg";
 import cleanerIcon from "../assets/cleanerIcon.svg";
+import { useNavigate } from "react-router-dom";
 
 import { NavLink } from "react-router-dom";
 
 export default function Sidebar() {
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    navigate("/login");
+  };
   return (
     <>
       <div className="flex flex-col bg-white text-gray-600 text-lg font-semibold gap-5 border-r border-gray-200">
@@ -79,6 +87,13 @@ export default function Sidebar() {
             Cleaners
           </div>
         </NavLink>
+
+        <button
+          onClick={handleLogout}
+          className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300"
+        >
+          Logout
+        </button>
       </div>
     </>
   );

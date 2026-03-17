@@ -1,9 +1,15 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import cleanerIcon from "../assets/DefaultCleanerProfileImg.png";
 import emailIcon from "../assets/EmailIcon.svg";
 import phoneIcon from "../assets/PhoneIcon.svg";
 
+const token = localStorage.getItem("token");
+const user = JSON.parse(localStorage.getItem("user") || "{}");
+const isAdmin = user.role === "admin";
+
 export default function Cleaners() {
+  const navigate = useNavigate();
   const [cleaners, setCleaners] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
@@ -22,6 +28,7 @@ export default function Cleaners() {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
       },
       body: JSON.stringify(formData)
     });
@@ -45,23 +52,37 @@ export default function Cleaners() {
   }
 };
 
-  useEffect(() => {
-    console.log("API URL:", import.meta.env.VITE_API_URL);
-    async function fetchCleaners() {
-      try {
-        const res = await fetch(`${import.meta.env.VITE_API_URL}/api/cleaners`);
-        const cleanersData = await res.json();
-
-        setCleaners(cleanersData);
-      } catch (err) {
-        console.error("Error fetching cleaners:", err);
-      } finally {
-        setLoading(false);
+useEffect(() => {
+  async function fetchCleaners() {
+    try {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/cleaners`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      
+      if (!res.ok) {
+        if (res.status === 401) {
+          // Token expired or invalid
+          localStorage.removeItem("token");
+          localStorage.removeItem("user");
+          navigate("/login");
+          return;
+        }
+        throw new Error('Failed to fetch cleaners');
       }
-    }
 
-    fetchCleaners();
-  }, []);
+      const cleanersData = await res.json();
+      setCleaners(cleanersData);
+    } catch (err) {
+      console.error("Error fetching cleaners:", err);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  fetchCleaners();
+}, [token]);
 
   if (loading)
     return (
