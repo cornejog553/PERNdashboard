@@ -4,7 +4,6 @@ import bookingIcon from "../assets/BookingIcon.svg";
 import customerIcon from "../assets/CustomersIcon.svg";
 import cleanerIcon from "../assets/cleanerIcon.svg";
 import { useNavigate } from "react-router-dom";
-
 import { NavLink } from "react-router-dom";
 
 export default function Sidebar() {
