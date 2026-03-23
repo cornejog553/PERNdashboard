@@ -71,7 +71,7 @@ export default function Cleaners() {
 
       if (!res.ok) throw new Error("Failed to delete cleaner");
 
-      // setCleaners((prev) => prev.filter((c) => c.id !== selectedCleanerId));
+      setCleaners((prev) => prev.filter((c) => c.id !== cleanerId));
       setShowDeleteCleanerModal(false);
       setDeleteCleanerId(null);
     } catch (err) {
