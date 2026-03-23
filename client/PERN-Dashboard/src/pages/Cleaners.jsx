@@ -12,7 +12,11 @@ export default function Cleaners() {
   const navigate = useNavigate();
   const [cleaners, setCleaners] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [showModal, setShowModal] = useState(false);
+  const [showNewCleanerModal, setShowNewCleanerModal] = useState(false);
+  // const [showUpdateCleanerModal, setShowUpdateCleanerModal] = useState(false);
+  const [showDeleteModal, setShowDeleteCleanerModal] = useState(false);
+  const [deleteCleanerId, setDeleteCleanerId] = useState(false);
+  const [deleteLoading, setDeleteLoading] = useState(false);
   const [formData, setFormData] = useState({
     full_name: "",
     email: "",
@@ -46,11 +50,33 @@ export default function Cleaners() {
       setCleaners([...cleaners, newCleaner]);
 
       // Close modal and reset form
-      setShowModal(false);
+      setShowNewCleanerModal(false);
       setFormData({ full_name: "", email: "", phone: "", is_active: true });
     } catch (error) {
       console.error("Error adding cleaner:", error);
       alert("Failed to add cleaner. Please try again.");
+    }
+  };
+
+  const handleCleanerDeletion = async (cleanerId) => {
+    setDeleteLoading(true);
+    try {
+      const res = await fetch(`/api/cleaners/${cleanerId}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!res.ok) throw new Error("Failed to delete cleaner");
+
+      // setCleaners((prev) => prev.filter((c) => c.id !== selectedCleanerId));
+      setShowDeleteCleanerModal(false);
+      setDeleteCleanerId(null);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setDeleteLoading(false);
     }
   };
 
@@ -113,7 +139,7 @@ export default function Cleaners() {
       {isAdmin && (
         <div className="flex justify-end mb-4 w-full">
           <button
-            onClick={() => setShowModal(true)}
+            onClick={() => setShowNewCleanerModal(true)}
             className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors shadow-sm font-medium"
           >
             Add Cleaner
@@ -121,8 +147,8 @@ export default function Cleaners() {
         </div>
       )}
 
-      {/* Modal */}
-      {showModal && isAdmin && (
+      {/* New Cleaner Modal */}
+      {showNewCleanerModal && isAdmin && (
         <div className="fixed inset-0 backdrop-blur-sm bg-white/30 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-6 w-96 border border-gray-200 shadow-xl">
             <h2 className="text-xl font-bold mb-4">Add New Cleaner</h2>
@@ -190,7 +216,7 @@ export default function Cleaners() {
                 <button
                   type="button"
                   onClick={() => {
-                    setShowModal(false);
+                    setShowNewCleanerModal(false);
                     setFormData({ full_name: "", email: "", phone: "" });
                   }}
                   className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer"
@@ -209,9 +235,48 @@ export default function Cleaners() {
         </div>
       )}
 
+      {/* Delete Cleaner Modal */}
+
+      {showDeleteModal && isAdmin && (
+        <div className="fixed inset-0 bg-black/35 flex items-center justify-center z-50">
+      <div className="bg-white rounded-xl border border-gray-200 p-7 w-[360px] max-w-[90%]">
+
+        <div className="w-11 h-11 rounded-full bg-red-50 flex items-center justify-center mb-4">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+            <path d="M8.5 3h3a1 1 0 0 1 1 1H7.5a1 1 0 0 1 1-1ZM5.5 5h9l-.8 10.1A1.5 1.5 0 0 1 12.2 16H7.8a1.5 1.5 0 0 1-1.5-1.4L5.5 5ZM4 5h12"
+              stroke="#A32D2D" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+        </div>
+
+        <p className="text-base font-medium text-gray-900 mb-1.5">Delete cleaner?</p>
+        <p className="text-sm text-gray-500 leading-relaxed mb-6">
+          This action cannot be undone. The cleaner's profile and all associated records will be permanently removed.
+        </p>
+
+        <div className="flex gap-2.5">
+          <button
+            onClick={()=> {setShowDeleteCleanerModal(false)}}
+            disabled={deleteLoading}
+            className="flex-1 py-2 text-sm rounded-lg border border-gray-200 bg-white text-gray-700 hover:bg-gray-50 transition-colors cursor-pointer"
+          >
+            Cancel
+          </button>
+          <button
+            onClick={()=> handleCleanerDeletion(deleteCleanerId)}
+            disabled={deleteLoading}
+            className="flex-1 py-2 text-sm rounded-lg bg-red-800 text-red-100 hover:bg-red-900 transition-colors cursor-pointer border-none"
+          >
+            {deleteLoading ? "Deleting..." : "Yes, delete"}
+          </button>
+        </div>
+
+      </div>
+    </div>
+      )}
+
       {cleaners.map((cleaner) => (
         // Cleaner Card
-        <div className="flex-row w-full sm:w-full md:w-full lg:w-1/4 p-4 shadow-md">
+        <div className="flex-row w-full sm:w-full md:w-full lg:w-1/4 p-4 shadow-md bg-white rounded-lg" key={cleaner.id}>
           <div>
             <img src={cleanerIcon} alt="Cleaner Profile Image" />
           </div>
@@ -231,6 +296,26 @@ export default function Cleaners() {
             <img src={phoneIcon} alt="" />
             {cleaner.phone}
           </div>
+
+          {/* Update and Delete buttons - only show for admins */}
+          {isAdmin && (
+            <div className="flex gap-2 mt-4">
+              <button
+                onClick={() => console.log("test")}
+                className="flex-1 px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium"
+              >
+                Update
+              </button>
+              <button
+                onClick={() => {setShowDeleteCleanerModal(true)
+                  setDeleteCleanerId(cleaner.id)
+                }}
+                className="flex-1 px-3 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors text-sm font-medium"
+              >
+                Delete
+              </button>
+            </div>
+          )}
         </div>
       ))}
     </div>
