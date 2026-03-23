@@ -24,6 +24,37 @@ export default function Cleaners() {
     is_active: true,
   });
 
+  const fetchCleaners = async () => {
+        try {
+          const res = await fetch(
+            `${import.meta.env.VITE_API_URL}/api/cleaners`,
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            },
+          );
+
+          if (!res.ok) {
+            if (res.status === 401) {
+              // Token expired or invalid
+              localStorage.removeItem("token");
+              localStorage.removeItem("user");
+              navigate("/login");
+              return;
+            }
+            throw new Error("Failed to fetch cleaners");
+          }
+
+          const cleanersData = await res.json();
+          setCleaners(cleanersData);
+        } catch (err) {
+          console.error("Error fetching cleaners:", err);
+        } finally {
+          setLoading(false);
+        }
+      }
+
   const handleNewCleanerSubmit = async (e) => {
     e.preventDefault();
 
@@ -71,7 +102,7 @@ export default function Cleaners() {
 
       if (!res.ok) throw new Error("Failed to delete cleaner");
 
-      setCleaners((prev) => prev.filter((c) => c.id !== cleanerId));
+      await fetchCleaners();
       setShowDeleteCleanerModal(false);
       setDeleteCleanerId(null);
     } catch (err) {
@@ -82,37 +113,6 @@ export default function Cleaners() {
   };
 
   useEffect(() => {
-    async function fetchCleaners() {
-      try {
-        const res = await fetch(
-          `${import.meta.env.VITE_API_URL}/api/cleaners`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          },
-        );
-
-        if (!res.ok) {
-          if (res.status === 401) {
-            // Token expired or invalid
-            localStorage.removeItem("token");
-            localStorage.removeItem("user");
-            navigate("/login");
-            return;
-          }
-          throw new Error("Failed to fetch cleaners");
-        }
-
-        const cleanersData = await res.json();
-        setCleaners(cleanersData);
-      } catch (err) {
-        console.error("Error fetching cleaners:", err);
-      } finally {
-        setLoading(false);
-      }
-    }
-
     fetchCleaners();
   }, [token]);
 
