@@ -60,8 +60,9 @@ export default function Cleaners() {
 
   const handleCleanerDeletion = async (cleanerId) => {
     setDeleteLoading(true);
+    console.log(cleanerId);
     try {
-      const res = await fetch(`/api/cleaners/${cleanerId}`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/cleaners/${cleanerId}`, {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${token}`,
