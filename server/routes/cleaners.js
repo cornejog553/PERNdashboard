@@ -32,8 +32,29 @@ router.post("/", auth, adminOnly, async (req, res) => {
   }
 });
 
+router.put("/:id", auth, adminOnly, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { full_name, email, phone, is_active } = req.body;
+    
+    const result = await pool.query(
+      `UPDATE cleaners 
+       SET full_name = $1, email = $2, phone = $3, is_active = $4 
+       WHERE id = $5 
+       RETURNING *`,
+      [full_name, email, phone, is_active, id]
+    );
+    
+    res.status(201).json(result.rows[0]);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Server error");
+  }
+});
+
 // Delete cleaner by id - require admin role
 router.delete("/:id", auth, adminOnly, async (req, res) => {
+  console.log("Delete route hit, id:", req.params.id);
   try {
     const { id } = req.params;
 
