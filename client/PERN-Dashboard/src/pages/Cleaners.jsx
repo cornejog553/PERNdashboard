@@ -13,7 +13,8 @@ export default function Cleaners() {
   const [cleaners, setCleaners] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showNewCleanerModal, setShowNewCleanerModal] = useState(false);
-  // const [showUpdateCleanerModal, setShowUpdateCleanerModal] = useState(false);
+  const [showUpdateCleanerModal, setShowUpdateCleanerModal] = useState(false);
+  const [editingCleanerId, setEditingCleanerId] = useState(null)
   const [showDeleteModal, setShowDeleteCleanerModal] = useState(false);
   const [deleteCleanerId, setDeleteCleanerId] = useState(false);
   const [deleteLoading, setDeleteLoading] = useState(false);
@@ -86,6 +87,62 @@ export default function Cleaners() {
     } catch (error) {
       console.error("Error adding cleaner:", error);
       alert("Failed to add cleaner. Please try again.");
+    }
+  };
+
+  const handleShowUpdateCleanerForm = (cleanerId) => {
+  // Find the cleaner in your existing state
+  const cleanerToEdit = cleaners.find(cleaner => cleaner.id === cleanerId);
+  
+  // Pre-fill the form with their current data
+  setFormData({
+    full_name: cleanerToEdit.full_name,
+    email: cleanerToEdit.email,
+    phone: cleanerToEdit.phone,
+    is_active: cleanerToEdit.is_active
+  });
+  
+  // Track which cleaner we're editing
+  setEditingCleanerId(cleanerId);
+  
+  // Open the modal
+  setShowUpdateCleanerModal(true);
+};
+
+const handleUpdateCleanerSubmit = async (e) => {
+    e.preventDefault();
+
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}/api/cleaners/${editingCleanerId}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(formData),
+        },
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to update cleaner");
+      }
+
+      const updatedCleaner = await response.json();
+
+      // Update the cleaner in local state (replace the old one)
+    setCleaners(cleaners.map(cleaner => 
+      cleaner.id === editingCleanerId ? updatedCleaner : cleaner
+    ));
+
+      // Close modal and reset form
+      setShowUpdateCleanerModal(false);
+      setEditingCleanerId(null)
+      setFormData({ full_name: "", email: "", phone: "", is_active: true });
+    } catch (error) {
+      console.error("Error updating cleaner:", error);
+      alert("Failed to update cleaner. Please try again.");
     }
   };
 
@@ -236,6 +293,94 @@ export default function Cleaners() {
         </div>
       )}
 
+      {/* Update  Cleaner Modal */}
+      {showUpdateCleanerModal && isAdmin && (
+        <div className="fixed inset-0 backdrop-blur-sm bg-white/30 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 w-96 border border-gray-200 shadow-xl">
+            <h2 className="text-xl font-bold mb-4">Update Cleaner</h2>
+
+            <form onSubmit={handleUpdateCleanerSubmit}>
+              <div className="mb-4">
+                <label className="block text-sm font-medium mb-2">Name</label>
+                <input
+                  type="text"
+                  required
+                  value={formData.full_name}
+                  onChange={(e) =>
+                    setFormData({ ...formData, full_name: e.target.value })
+                  }
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+
+              <div className="mb-4">
+                <label className="block text-sm font-medium mb-2">Email</label>
+                <input
+                  type="email"
+                  required
+                  value={formData.email}
+                  onChange={(e) =>
+                    setFormData({ ...formData, email: e.target.value })
+                  }
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+
+              <div className="mb-4">
+                <label className="block text-sm font-medium mb-2">Phone</label>
+                <input
+                  type="tel"
+                  required
+                  value={formData.phone}
+                  onChange={(e) =>
+                    setFormData({ ...formData, phone: e.target.value })
+                  }
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+
+              <div className="mb-4">
+                <label className="block text-sm font-medium mb-2">
+                  Active Cleaner?
+                </label>
+                <select
+                  value={formData.is_active}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      is_active: e.target.value === "true",
+                    })
+                  }
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  <option value="true">Active</option>
+                  <option value="false">Inactive</option>
+                </select>
+              </div>
+
+              <div className="flex gap-2 justify-end">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowUpdateCleanerModal(false);
+                    setFormData({ full_name: "", email: "", phone: "" });
+                  }}
+                  className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors cursor-pointer"
+                >
+                  Update Cleaner
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
       {/* Delete Cleaner Modal */}
 
       {showDeleteModal && isAdmin && (
@@ -302,7 +447,7 @@ export default function Cleaners() {
           {isAdmin && (
             <div className="flex gap-2 mt-4">
               <button
-                onClick={() => console.log("test")}
+                onClick={() => {handleShowUpdateCleanerForm(cleaner.id)}}
                 className="flex-1 px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium"
               >
                 Update
