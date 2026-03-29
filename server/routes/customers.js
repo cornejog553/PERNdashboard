@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const pool = require("../db");
+const { auth, adminOnly } = require("../middleware/auth");
 
 router.get("/", async (req, res) => {
   try {
