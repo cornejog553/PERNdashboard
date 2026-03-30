@@ -73,15 +73,15 @@ export default function Customers() {
         throw new Error('Failed to save customer');
       }
 
-      const savedCustomer = await response.json();
+      const newCustomer = await response.json();
 
       // Update state
       if (editingCustomerId) {
         setCustomers(customers.map(c =>
-          c.id === editingCustomerId ? savedCustomer : c
+          c.id === editingCustomerId ? newCustomer : c
         ));
       } else {
-        setCustomers([...customers, savedCustomer]);
+        setCustomers([...customers, newCustomer]);
       }
 
       // Close modal and reset

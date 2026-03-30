@@ -17,7 +17,8 @@ export default function BookingCalendar() {
 
         //Convert start and end Date objects
         const formattedData = data.map((booking) => {
-          const start = new Date(booking.scheduled_at);
+          const start = new Date(booking.scheduled_at);        
+        
           return {
             ...booking,
             title: booking.service_name,
@@ -26,7 +27,6 @@ export default function BookingCalendar() {
             id: booking.id,
           };
         });
-
         setBookings(formattedData);
       } catch (err) {
         console.error("Error fetching bookings:", err);
