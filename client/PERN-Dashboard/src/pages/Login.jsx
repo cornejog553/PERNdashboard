@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
 
 export default function Login() {
   const [isLogin, setIsLogin] = useState(true);
@@ -9,8 +8,6 @@ export default function Login() {
     full_name: ""
   });
   const [error, setError] = useState("");
-  const navigate = useNavigate();
-  const location = useLocation();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
