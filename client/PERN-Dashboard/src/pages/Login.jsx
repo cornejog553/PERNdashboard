@@ -35,9 +35,8 @@ export default function Login() {
       localStorage.setItem("token", data.token);
       localStorage.setItem("user", JSON.stringify(data.user));
       
-      // Redirect to where they came from, or dashboard as default
-      const from = location.state?.from?.pathname || "/";
-      navigate(from, { replace: true });
+      // FORCE PAGE REFRESH
+    window.location.href = "/";
       
     } catch (err) {
       console.error(err);

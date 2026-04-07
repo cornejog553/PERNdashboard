@@ -61,7 +61,7 @@ export default function Bookings() {
     }
   };
 
-  const handleSubmit = async (e) => {
+  const handleNewBookingSubmit = async (e) => {
     e.preventDefault();
 
     try {
@@ -126,7 +126,7 @@ export default function Bookings() {
             {loading ? (
               <div className="text-center py-8">Loading form data...</div>
             ) : (
-              <form onSubmit={handleSubmit}>
+              <form onSubmit={handleNewBookingSubmit}>
                 <div className="mb-4">
                   <label className="block text-sm font-medium mb-2">Customer</label>
                   <select
