@@ -29,10 +29,10 @@ export default function Bookings() {
 
   // Fetch dropdown data when modal opens
   useEffect(() => {
-    if (showCreateModal) {
+    if (showCreateModal || (showViewModal && isEditing)) {
       fetchDropdownData();
     }
-  }, [showCreateModal]);
+  }, [showCreateModal, showViewModal, isEditing]);
 
   const fetchDropdownData = async () => {
     setLoading(true);
