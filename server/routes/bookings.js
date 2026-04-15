@@ -36,4 +36,50 @@ router.post("/", async (req, res) => {
   }
 });
 
+// PUT - Update booking
+router.put("/:id", auth, adminOnly, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { customer_id, service_id, cleaner_id, scheduled_at, status, notes } = req.body;
+    
+    const result = await pool.query(
+      `UPDATE bookings 
+       SET customer_id = $1, service_id = $2, cleaner_id = $3, scheduled_at = $4, status = $5, notes = $6
+       WHERE id = $7 
+       RETURNING *`,
+      [customer_id, service_id, cleaner_id, scheduled_at, status, notes, id]
+    );
+    
+    if (result.rows.length === 0) {
+      return res.status(404).json({ message: "Booking not found" });
+    }
+    
+    res.json(result.rows[0]);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Server error");
+  }
+});
+
+// DELETE - Delete booking
+router.delete("/:id", auth, adminOnly, async (req, res) => {
+  try {
+    const { id } = req.params;
+    
+    const result = await pool.query(
+      `DELETE FROM bookings WHERE id = $1 RETURNING *`,
+      [id]
+    );
+    
+    if (result.rows.length === 0) {
+      return res.status(404).json({ message: "Booking not found" });
+    }
+    
+    res.json({ message: "Booking deleted" });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Server error");
+  }
+});
+
 module.exports = router;
