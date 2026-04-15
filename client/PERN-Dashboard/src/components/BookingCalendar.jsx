@@ -4,7 +4,7 @@ import { Calendar, Views } from "react-big-calendar";
 import { localizer } from "./calendarSetup";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 
-export default function BookingCalendar() {
+export default function BookingCalendar({ onSelectEvent }) {
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
   const [currentDate, setCurrentDate] = useState(new Date());
@@ -40,11 +40,6 @@ export default function BookingCalendar() {
 
   const [currentView, setCurrentView] = useState(Views.MONTH);
 
-  const handleSelectEvent = (event) => {
-    alert(`Clicked on booking: ${event.title}`);
-    // You can route to a booking detail page or open a modal here
-  };
-
   if (loading) return <div>Loading bookings...</div>;
 
   return (
@@ -59,7 +54,7 @@ export default function BookingCalendar() {
       onView={setCurrentView}
       date={currentDate}
       onNavigate={(newDate) => setCurrentDate(newDate)}
-      onSelectEvent={handleSelectEvent}
+      onSelectEvent={onSelectEvent} 
     />
   );
 }
