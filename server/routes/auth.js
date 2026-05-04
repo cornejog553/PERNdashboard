@@ -9,7 +9,7 @@ const JWT_SECRET = process.env.JWT_SECRET || "your-secret-key-change-this-in-pro
 // Register new user
 router.post("/register", async (req, res) => {
   try {
-    const { email, password, full_name } = req.body;
+    const { email, password, full_name, role } = req.body;
     
     // Check if user already exists
     const userExists = await pool.query(
@@ -25,11 +25,17 @@ router.post("/register", async (req, res) => {
     const salt = await bcrypt.genSalt(10);
     const password_hash = await bcrypt.hash(password, salt);
     
+    
     // Create user
     const result = await pool.query(
-      "INSERT INTO users (email, password_hash, full_name) VALUES ($1, $2, $3) RETURNING id, email, full_name, role",
-      [email, password_hash, full_name]
+      "INSERT INTO users (email, password_hash, full_name, role) VALUES ($1, $2, $3, $4) RETURNING id, email, full_name, role",
+      [email, password_hash, full_name, role]
     );
+
+    console.log(role);
+    console.log(result);
+    
+    
     
     // Create JWT token
     const token = jwt.sign(
